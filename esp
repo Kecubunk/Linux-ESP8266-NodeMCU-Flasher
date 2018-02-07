@@ -1,0 +1,58 @@
+#!/bin/bash
+path=`pwd`
+float=$path/image/float.bin
+int=$path/image/int.bin
+
+menus() {
+	clear
+	tput setaf 6
+	echo " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	tput sgr0
+	echo "                            M A I N - M E N U                               "
+	tput setaf 6
+  echo " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	tput sgr0
+	echo " 1. Checking Flash ID"
+	echo " 2. Erase Flash"
+  	echo " 3. Flash NodeMCU Default Firmware"
+  	echo " 4. Exit"
+	tput setaf 6
+  echo " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+	tput sgr0
+	echo ""
+}
+
+option(){
+	local choice
+	read -p " Enter choice [ 1 - 4] : " choice
+	case $choice in
+		1) flashid ;;
+		2) erase ;;
+		3) flashnodemcu;;
+		4) exit 0;;
+		*) echo -e "${RED}Error...${STD}" && sleep 2
+	esac
+}
+
+erase(){
+  echo -n " Enter Port :";
+  read port;
+  sudo esptool.py --port $port erase_flash
+  menus
+}
+
+flashid(){
+  echo -n " Enter Port :";
+  read port;
+  sudo esptool.py --port $port flash_id
+  sleep 5
+  menus
+}
+
+flashnodemcu(){
+  echo -n " Enter Port :";
+  read port;
+  sudo esptool.py --port $port write_flash -fm dio 0x00000 $float
+}
+menus
+option
